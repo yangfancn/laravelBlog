@@ -1,0 +1,23 @@
+//admin lte
+@import "admin-lte/dist/css/adminlte.min.css";
+//plugins
+@import "admin-lte/plugins/toastr/toastr.min.css";
+@import "admin-lte/plugins/sweetalert2/sweetalert2.min.css";
+//font-awesome 6
+@import '~@fortawesome/fontawesome-free/scss/brands';
+@import '~@fortawesome/fontawesome-free/scss/regular';
+@import '~@fortawesome/fontawesome-free/scss/solid';
+@import '~@fortawesome/fontawesome-free/scss/fontawesome';
+@import "nprogress/nprogress.css";
+
+html {
+  font-size: 14px;
+}
+
+.btn-no-style {
+  display: inline;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+}
