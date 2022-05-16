@@ -164,14 +164,14 @@ jQuery(document).pjax('a', '#pjax-container', {
   maxCacheLength: false,
   timeout: 10000
 }).on('pjax:start', () => {
-  // nProgress.start();
+  nProgress.start();
 }).on('pjax:end', () => {
-  // nProgress.done();
+  nProgress.done();
 })
-//
-// $('.nav-pills.nav-sidebar li a.nav-link:not([href="#"]), a.home').click(function () {
-//     $('.nav-pills.nav-sidebar li a.nav-link').removeClass('active');
-//     if ($(this).parents('.nav-pills.nav-sidebar').length) {
-//         $(this).addClass('active');
-//     }
-// })
+
+$('.nav-pills.nav-sidebar li a.nav-link:not([href="#"]), a.home').click(function () {
+    $('.nav-pills.nav-sidebar li a.nav-link').removeClass('active');
+    if ($(this).parents('.nav-pills.nav-sidebar').length) {
+        $(this).addClass('active');
+    }
+})

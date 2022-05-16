@@ -1,25 +1,18 @@
 <?php
+namespace App\View\Composers;
 
-namespace App\Http\Middleware;
-
-use Closure;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\View;
+use App\Models\Site;
+use Illuminate\View\View;
 use Spatie\Permission\Models\Permission;
 
-class AssignUserPermissions
+class AdminComposer
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param Request $request
-     * @param Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
-     * @return Response|RedirectResponse
-     */
-    public function handle(Request $request, Closure $next): Response|RedirectResponse
+    protected array $permissions;
+    protected Site $site;
+    public function __construct()
     {
+        $this->site = Site::first();
+
         $user = auth('admin')->user();
         if ($user->hasRole('super admin')) {
             $permissions = Permission::all();
@@ -41,7 +34,12 @@ class AssignUserPermissions
                 $menu[$key]['children'] = $channel['children'];
             }
         }
-        View::share('menu', $menu);
-        return $next($request);
+        $this->permissions = $menu;
+    }
+
+    public function compose(View $view): void
+    {
+        $view->with('site', $this->site);
+        $view->with('menu', $this->permissions);
     }
 }

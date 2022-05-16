@@ -36,9 +36,7 @@ class AuthPermission
             }
         }
         //permission check
-        dd($request->route()->getName());
-        $action = class_basename($request->route()->getAction()['controller']);
-        $permissionName = str_replace('@', '.', $action);
+        $permissionName= $request->route()->getName();
         if (!auth('admin')->user()->can($permissionName)) {
             if ($request->acceptsHtml()) {
                 abort(ResponseAlias::HTTP_FORBIDDEN);
@@ -50,7 +48,17 @@ class AuthPermission
             }
         }
         //active menu id
-        $activePermission = Permission::where(['name' => 'IndexController.index', 'guard_name' => 'admin'])->first();
+        $activePermission = Permission::where(['name' => $permissionName, 'guard_name' => 'admin'])->first();
+        if (!$activePermission) {
+            if ($request->acceptsHtml()) {
+                abort(ResponseAlias::HTTP_FORBIDDEN, 'undefined permission');
+            } else {
+                return new JsonResponse([
+                    'message' => __('undefined permission'),
+                    'redirectTo' => null
+                ], ResponseAlias::HTTP_UNAUTHORIZED);
+            }
+        }
         if ($activePermission['pid'] === 0) {
             $activeMenuId = $activePermission['id'];
             $activeSubMenuId = null;

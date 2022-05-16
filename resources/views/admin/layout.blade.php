@@ -9,6 +9,9 @@
   <title>Manager</title>
   <link rel="stylesheet" href="{{ mix('admin/css/app.css') }}">
   @yield('styles')
+  <script src="{{ mix('admin/js/manifest.js') }}"></script>
+  <script src="{{ mix('admin/js/vendor.js') }}"></script>
+  <script src="{{ mix('admin/js/app.js') }}"></script>
 </head>
 <body class="sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
@@ -29,14 +32,14 @@
         <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fa fa-bars"></i></a>
       </li>
       <li class="nav-item d-none d-sm-inline-block">
-        <a href="" data-pjax class="nav-link home">Home</a>
+        <a href="{{ route('admin.index') }}" data-pjax class="nav-link home">Home</a>
       </li>
     </ul>
 
     <!-- Right navbar links -->
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
-        <a class="nav-link" href="#">
+        <a class="nav-link" href="{{ route('admin.index') }}">
           <form action="{{ route('admin.logout') }}" method="POST">
             @method('DELETE')
             @csrf
@@ -55,7 +58,7 @@
   </nav>
   <aside class="main-sidebar sidebar-dark-primary elevation-4 ">
     <!-- Brand Logo -->
-    <a href="" data-pjax class="brand-link home">
+    <a href="{{ route('admin.index') }}" data-pjax class="brand-link home">
       <img src="{{ asset('/admin/pictures/AdminLTELogo.png') }}" alt=""
            class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text font-weight-light"><b>Manager</b></span>
@@ -106,9 +109,8 @@
                     @foreach($channel['children'] as $child)
                       @if($child['show'])
                         <li class="nav-item">
-                          <a href="" data-pjax @class
-                          (['nav-link', 'active' =>
-                                                    $activeSubMenuId === $child['id']])>
+                          <a href="{{ route($child['name']) }}" data-pjax
+                            @class(['nav-link', 'active' => $activeSubMenuId === $child['id']])>
                             <i class="{{ $child['icon'] ?: 'fa-regular fa-circle' }}
                                                         nav-icon"></i>
                             <p>{{ $child['description'] }}</p>
@@ -120,7 +122,7 @@
                 </li>
               @else
                 <li class="nav-item">
-                  <a href="" class="nav-link">
+                  <a href="{{ route($channel['name']) }}" class="nav-link">
                     <i class="nav-icon {{ $channel['icon'] }}"></i>
                     <p>
                       {{ $channel['description'] }}
@@ -145,9 +147,6 @@
     </div>
   </div>
 </div>
-<script src="{{ mix('admin/js/manifest.js') }}"></script>
-<script src="{{ mix('admin/js/vendor.js') }}"></script>
-<script src="{{ mix('admin/js/app.js') }}"></script>
 @yield('scripts')
 </body>
 </html>

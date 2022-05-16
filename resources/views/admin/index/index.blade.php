@@ -94,9 +94,6 @@
       <!-- /.row (main row) -->
     </div>
   </section>
-@endsection
-
-@section('scripts')
   <script>
     var visitors = {{ Js::from($visitors_distributed) }};
     var month_spiders = {{ Js::from($month_visitors->makeHidden(['page_view', 'unique_view', 'id', 'created_at',
@@ -107,4 +104,13 @@
     var month_dates = {{ Js::from($month_visitors->pluck('created_at')->toArray()) }}
   </script>
   <script src="{{ mix('/admin/js/dashboard.js') }}"></script>
+  <script>
+    jQuery(document).ready(function () {
+      dashboard();
+    })
+  </script>
+@endsection
+
+@section('scripts')
+
 @endsection

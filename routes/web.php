@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Home\PostsController;
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\Admin\SessionsController;
 
@@ -15,3 +16,7 @@ use \App\Http\Controllers\Admin\SessionsController;
 */
 
 require __DIR__ . '/admin.php';
+
+Route::namespace('\App\Http\Controllers\Home')->group(function () {
+//    Route::resource('posts', PostsController::class);
+});

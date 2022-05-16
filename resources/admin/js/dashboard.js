@@ -2,8 +2,7 @@ import * as echarts from "echarts";
 import dayjs from "dayjs";
 import axios from "axios";
 
-
-jQuery(document).ready(() => {
+window.dashboard = function() {
   let chartDistributed = document.getElementById('charts-week-visitor-map'),
     chartVisitor = document.getElementById('charts-month-visitor'),
     chartRobot = document.getElementById('charts-month-spider');
@@ -82,7 +81,7 @@ jQuery(document).ready(() => {
     VisitorChart.resize();
     RobotChart.resize();
   })
-});
+}
 
 const names = {
   page_view: 'PV',
@@ -170,7 +169,7 @@ function formatData(data) {
         result.seriesData[i] = [];
       }
       result.seriesData[i].push(value)
-      ++ i;
+      ++i;
     })
   })
   return result;
