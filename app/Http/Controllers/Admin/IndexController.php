@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Handlers\VisitorHandler;
 use App\Models\Post;
+use App\Models\Province;
 use App\Models\User;
 use App\Models\Visitor;
 use Illuminate\Http\Request;

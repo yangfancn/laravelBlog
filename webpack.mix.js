@@ -26,12 +26,17 @@ mix.webpackConfig({
   .js('resources/admin/js/app.js', 'public/admin/js')
   .js('resources/admin/js/dashboard.js', 'public/admin/js')
   .js('resources/admin/js/list.js', 'public/admin/js')
+  .js('resources/admin/js/form.js', 'public/admin/js')
   .sass('resources/admin/scss/app.scss', 'public/admin/css')
   .copy('resources/admin/pictures', 'public/admin/pictures')
   .copy('resources/admin/data', 'public/admin/data')
   .options({
-    // processCssUrls: false
+    autoprefixer: {
+      remove: false,
+      flexbox: "no-2009"
+    }
   })
-  .extract();
+  .extract()
+  .disableNotifications();
 
 mix.version();

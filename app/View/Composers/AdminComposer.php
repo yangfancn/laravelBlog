@@ -12,8 +12,8 @@ class AdminComposer
     public function __construct()
     {
         $this->site = Site::first();
-
         $user = auth('admin')->user();
+
         if ($user->hasRole('super admin')) {
             $permissions = Permission::all();
         } else {
