@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
 
 /**
  * App\Models\Post
@@ -48,4 +50,32 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
     use HasFactory;
+
+    protected $guarded = ['id', 'updated_at'];
+
+    public function tags(): MorphToMany
+    {
+        return $this->morphToMany(Tag::class, 'taggable');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    protected static function booted()
+    {
+        static::saved(function (Post $post) {
+            if ($post->isDirty('user_id') && $post->getOriginal('user_id')) {
+                $this->user->update([
+                    'post_count' => $this->user->posts()->count()
+                ]);
+            }
+        });
+
+
+        static::deleted(function (Post $post) {
+            $post->tags()->delete();
+        });
+    }
 }

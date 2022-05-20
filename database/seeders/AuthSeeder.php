@@ -54,7 +54,7 @@ class AuthSeeder extends Seeder
             ['id' => 17, 'description' => '删除用户', 'name' => 'admin.admins.destroy', 'show' => 0, 'pid' => 1, 'status' => 1,
                 'rank' => 0],
             ['id' => 18, 'description' => '用户组列表', 'name' => 'admin.roles.index', 'show' => 1, 'pid' => 1,
-                'status' => 1, 'rank' => 0, 'icon' => 'fa-solid fa-admin.users'],
+                'status' => 1, 'rank' => 0, 'icon' => 'fa-solid fa-users'],
             ['id' => 19, 'description' => '创建用户组', 'name' => 'admin.roles.create', 'show' => 0, 'pid' => 1,
                 'status' => 1, 'rank' => 0],
             ['id' => 20, 'description' => '保存用户组', 'name' => 'admin.roles.store', 'show' => 0, 'pid' => 1,
@@ -105,7 +105,7 @@ class AuthSeeder extends Seeder
                 'status' => 1, 'rank' => 0],
             ['id' => 43, 'description' => 'CKEditor图片上传', 'name' => 'admin.upload.ckeditor', 'show' => 0, 'pid' =>
                 0, 'status' => 1, 'rank' => 0],
-            ['id' => 44, 'description' => '标签列表-ajax', 'name' => 'admin.tags.list', 'show' => 0, 'pid' => 25, 'status'
+            ['id' => 44, 'description' => '标签列表-ajax', 'name' => 'admin.tags.list', 'show' => 0, 'pid' => 53, 'status'
             => 1, 'rank' => 0],
             ['id' => 45, 'description' => '用户管理', 'name' => 'admin.users.index', 'show' => 1, 'pid' => 0, 'status'
             => 1, 'rank' => 0, 'icon' => 'fa-solid fa-users'],
@@ -136,6 +136,8 @@ class AuthSeeder extends Seeder
             ['id' => 58, 'description' => '删除 Tag', 'name' => 'admin.tags.destroy', 'show' => 0, 'pid' => 53, 'status'
             => 1, 'rank' => 0],
             ['id' => 59, 'description' => '排序 Tag', 'name' => 'admin.tags.rank', 'show' => 0, 'pid' => 53, 'status'
+            => 1, 'rank' => 0],
+            ['id' => 60, 'description' => '文件上传', 'name' => 'admin.upload.file', 'show' => 0, 'pid' => 0, 'status'
             => 1, 'rank' => 0],
         ];
         $permissions = array_map(function ($item) {

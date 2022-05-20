@@ -14,10 +14,10 @@ window.list_init = function (){
       data: {status: _status === 1 ? 0 : 1}
     }, (response) => {
       msg(response.data.message ? response.data.message : "修改状态成功", 'success');
-      jQuery(_this).html(response.data.data.status === 1 ? '<i class="fa fa-check text-info"></i>'
+      jQuery(_this).html(response.data.status ? '<i class="fa fa-check text-info"></i>'
         : '<i class="fa fa-times text-info"></i>');
       jQuery(_this).closest('tr').find('td[data-field="status"] small')
-        .text(response.data.data.status === 1 ? '启用' : '停用')
+        .text(response.data.status === 1 ? '启用' : '停用')
         .data('status', response.data.data.status);
     })
   })

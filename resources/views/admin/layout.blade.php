@@ -6,12 +6,14 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <meta name="x-csrf-token" content="{{ csrf_token() }}">
+  <meta http-equiv="x-pjax-version" content="{{ mix('/admin/js/form.js') }}">
   <title>Manager</title>
   <link rel="stylesheet" href="{{ mix('admin/css/app.css') }}">
   @yield('styles')
   <script src="{{ mix('admin/js/manifest.js') }}"></script>
   <script src="{{ mix('admin/js/vendor.js') }}"></script>
   <script src="{{ mix('admin/js/app.js') }}"></script>
+  <script src="{{ mix('/admin/js/list.js') }}"></script>
 </head>
 <body class="sidebar-mini layout-fixed layout-navbar-fixed">
 <div class="wrapper">
@@ -147,6 +149,30 @@
     </div>
   </div>
 </div>
+<div class="modal" data-modal="cropper">
+  <div class="cropper">
+    <div class="cropper-container">
+      <div style="max-height: 500px">
+        <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+      </div>
+    </div>
+    <div class="buttons mt-3">
+      <div class="btn-group">
+        <button type="button" class="btn btn-info rotate-left">
+          <i class="fa fa-rotate-left"></i>
+        </button>
+        <button type="button" class="btn btn-info rotate-right">
+          <i class="fa fa-rotate-right"></i>
+        </button>
+        <button type="button" class="btn btn-primary check">
+          <i class="fa fa-check"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="{{ mix('/admin/js/form.js') }}"></script>
+<script src="{{ mix('/admin/js/dashboard.js') }}"></script>
 @yield('scripts')
 </body>
 </html>

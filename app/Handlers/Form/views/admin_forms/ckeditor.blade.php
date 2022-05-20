@@ -3,6 +3,8 @@
   <textarea name="{{ $name }}" id="{{ $id }}" class="ckeditor-textarea">
     {{ $value ?: $placeholder }}</textarea>
   <script>
-    regisEditor('{{ $id }}');
+    $(document).ready(function () {
+      regisEditor('{{ $id }}');
+    })
   </script>
 </div>

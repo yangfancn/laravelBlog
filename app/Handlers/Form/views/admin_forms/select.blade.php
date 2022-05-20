@@ -4,7 +4,7 @@
     name="{{ $name }}"
     @class($classes)
     @if($isTags)data-tags="true" data-allow-clear="true" @endif
-    @if($isAjax)data-ajax-url="{{ route('admin.tags.list') }}" @endif
+    @if($ajax)data-ajax-url="{{ $ajax }}" @endif
     data-placeholder="{{ $placeholder }}"
     @if($isMultiple)multiple="multiple"@endif
   >

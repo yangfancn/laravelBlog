@@ -103,7 +103,6 @@
     })) }};
     var month_dates = {{ Js::from($month_visitors->pluck('created_at')->toArray()) }}
   </script>
-  <script src="{{ mix('/admin/js/dashboard.js') }}"></script>
   <script>
     jQuery(document).ready(function () {
       dashboard();

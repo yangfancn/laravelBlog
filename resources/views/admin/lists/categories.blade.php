@@ -33,7 +33,7 @@
                     <td>{{ $item['id'] }}</td>
                     <td>
                       {!! $item['level_name'] !!}
-                      @if($item['type'] === 1)
+                      @if($item['type'] === 0)
                         <span class="badge badge-danger">单页面</span>
                       @endif
                       @if($item['show'] === 0)
@@ -46,7 +46,7 @@
                       <a href="{{ route('admin.categories.edit', $item['id']) }}" class="btn btn-sm" title="编辑"><i
                           class="fa fa-pencil"></i></a>
                       <a href="javascript:;"
-                         data-href="{{ route('admin.categories.update', $item['id']) }}"
+                         data-href="{{ route('admin.categories.status', $item['id']) }}"
                          data-status="{{ $item['status'] }}"
                          class="btn btn-sm status" title="更改状态">
                         <i class="fa {{ $item['status'] ? 'fa-check' : 'fa-times' }} text-info"></i></a>
@@ -68,8 +68,6 @@
     </div>
     <!-- /.container-fluid -->
   </section>
-
-  <script src="{{ mix('/admin/js/list.js') }}"></script>
   <script>
     var rankUrl = '{{ route('admin.categories.rank') }}';
 

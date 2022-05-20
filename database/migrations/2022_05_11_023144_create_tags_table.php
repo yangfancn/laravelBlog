@@ -19,6 +19,7 @@ return new class extends Migration
             $table->integer('usage_count')->default(0);
             $table->integer('rank')->default(99999);
             $table->timestamps();
+            $table->unique(['name']);
         });
     }
 

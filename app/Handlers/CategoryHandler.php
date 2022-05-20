@@ -9,6 +9,7 @@ class CategoryHandler
     protected array $tree = [];
     public array $recursionList = [];
     protected array $temp = [];
+    protected $recursion = false;
 
     public function __construct(public Collection $channels)
     {
@@ -21,12 +22,23 @@ class CategoryHandler
         if (isset($this->temp[$key])) {
             return $this->temp[$key];
         }
-        $tree = $this->recursion($this->channels->sortBy('pid'), $pid);
-        $result = $list ? $this->recursionList : $tree;
+        if ($this->recursion) {
+            $tree = $this->recursion($this->channels->sortBy('pid'), $pid);
+            $result = $list ? $this->recursionList : $tree;
+        } else {
+            $wholeTree = $this->quote();
+            if ($list) {
+                $result = $this->quoteList($pid === 0 ? $wholeTree : $this->findPartTree($wholeTree, $pid));
+            } else {
+                $result = $pid === 0 ? $wholeTree : $this->findPartTree($wholeTree, $pid);
+            }
+        }
+
         $this->temp[$key] = $result;
         return $result;
     }
 
+    ################### 递归 #####################
 
     protected function recursion($channels, int $pid, int $depth = 1): array
     {
@@ -38,8 +50,7 @@ class CategoryHandler
             if ($channel['pid'] === $pid) {
                 $channel['depth'] = $depth;
                 $channel['max_depth'] = 1;
-                $tree[$channel['id']] = $channel;
-                $this->recursionList[$channel['id']] = $channel;
+                $this->recursionList[$channel['id']] = $tree[$channel['id']] = $channel;
                 unset($channels[$key]);
                 $tree[$channel['id']]['children'] = self::recursion($channels, $channel['id'], $depth + 1);
                 if ($tree[$channel['id']]['children']) {
@@ -50,6 +61,59 @@ class CategoryHandler
         }
         return $tree;
     }
+
+    ################### 引用传值 #####################
+
+    public function quote(): array
+    {
+        $items = [];
+        foreach ($this->channels as $channel) {
+            $items[$channel['id']] = $channel;
+        }
+        $tree = [];
+        foreach ($items as $key => &$item) {
+            if (isset($items[$item['pid']])) {
+                $children = $items[$item['pid']]['children'] ?? [];
+                $children[$item['id']] = &$item;
+                $items[$item['pid']]['children'] = $children;
+            } else {
+                $tree[$item['id']] = &$items[$key];
+            }
+        }
+        return $tree;
+    }
+
+    public function findPartTree(array $wholeTree, int $pid): array
+    {
+        static $tree = [];
+        foreach ($wholeTree as $part) {
+            if ($part['pid'] === $pid) {
+                $tree[$part['id']] = $part;
+            } else if (isset($part['children']) && $part['children']) {
+                $this->findPartTree($part['children'], $pid);
+            }
+        }
+        return $tree;
+    }
+
+    public function quoteList(array $tree, int $depth = 1, int $filter = null): array
+    {
+        static $data = [];
+        foreach ($tree as $item) {
+            if ($item['id'] === $filter) {
+                continue;
+            }
+            $item['depth'] = $depth;
+            $data[$item['id']] = $item;
+            if (isset($item['children']) && $item['children']) {
+                $this->quoteList($item['children'], $depth + 1, $filter);
+            }
+            unset($data[$item['id']]['children']);
+        }
+        return $data;
+    }
+
+    ###################  core end #####################
 
     private function sortArrayByMultiFields(array $arr, ...$args): array
     {
@@ -70,7 +134,7 @@ class CategoryHandler
     }
 
     public function buildLevelName(array  $quoteList, int $spaceNum = 6, string $levelStr = '├─',
-                                   string $endLevelStr = '└─'): array
+                                   string $endLevelStr = '└─', string $field = 'name'): array
     {
         $keys = array_keys($quoteList);
         $values = array_values($quoteList);
@@ -79,9 +143,9 @@ class CategoryHandler
                 $pad = str_repeat('&nbsp;', $spaceNum * ($channel['depth'] - 1));
                 $pad .= (!isset($values[$key + 1]['depth']) || $channel['depth'] > $values[$key + 1]['depth'])
                     ? $endLevelStr : $levelStr;
-                $channel['level_name'] = $pad . $channel['name'];
+                $channel['level_name'] = $pad . $channel[$field];
             } else {
-                $channel['level_name'] = $channel['name'];
+                $channel['level_name'] = $channel[$field];
             }
             $quoteList[$keys[$key]] = $channel;
         }
@@ -106,4 +170,5 @@ class CategoryHandler
         }
         return $model;
     }
+
 }

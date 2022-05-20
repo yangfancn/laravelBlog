@@ -2,6 +2,7 @@
 
 namespace App\Handlers\Form;
 
+use App\Handlers\Form\Enums\JsonType;
 use App\Models\Area;
 use App\Models\City;
 use App\Models\Province;
@@ -9,43 +10,50 @@ use App\Models\Street;
 use App\Models\Village;
 use Illuminate\Support\Facades\View;
 
+
 class FormBuilder
 {
     private string $html = '';
-    private int $region_used_times = 0;
-    private int $ckeditor_used_times = 0;
-    private int $upload_used_times = 0;
+    public array $options = [];
 
-    public function __construct(protected string $action, protected string $method)
+    public function __construct(protected string $action, protected string $method, )
     {
     }
 
-    public function addInput(string $type, string $name, string $label, int|string $value = '', int|string $placeholder = '', array $attrs = []): static
+    public function addInput(string $type, string $name, string $label, int|string $value = '', int|string $placeholder =
+    '', array $attrs = []): static
     {
         [$classes, $attrs] = $this->explodeClassFromAttrs($attrs);
-        $this->html .= view('admin_forms.input', compact(
-            'label',
-            'attrs',
-            'name',
-            'classes',
-            'attrs',
-            'value',
-            'placeholder',
-            'type'
-        ))->render();
+        $this->options[] = [
+            'view' => 'admin_forms.input',
+            'args' => compact(
+                'label',
+                'attrs',
+                'name',
+                'classes',
+                'attrs',
+                'value',
+                'placeholder',
+                'type'
+            )
+        ];
         return $this;
     }
 
-    public function addRadio(string $name, string $label, array $values, int|string $checkedValue = null, array $attrs = []): static
+    public function addRadio(string $name, string $label, array $values, int|string|null $checkedValue = null, array
+    $attrs = []): static
     {
         [$classes, $attrs] = $this->explodeClassFromAttrs($attrs, ['form-check-input']);
-        $this->html .= view('admin_forms.radio', compact('label',
-            'values',
-            'attrs',
-            'checkedValue',
-            'name',
-            'classes'
-        ))->render();
+        $this->options[] = [
+            'view' => 'admin_forms.radio',
+            'args' => compact('label',
+                'values',
+                'attrs',
+                'checkedValue',
+                'name',
+                'classes'
+            )
+        ];
         return $this;
     }
 
@@ -53,31 +61,45 @@ class FormBuilder
     []): static
     {
         [$classes, $attrs] = $this->explodeClassFromAttrs($attrs, ['form-check-input']);
-        $this->html .= view('admin_forms.checkbox', compact('name',
-            'label',
-            'values',
-            'checkedValues',
-            'classes',
-            'attrs'
-        ))->render();
+        if (!str_ends_with($name, '[]')) {
+            $name .= '[]';
+        }
+        $this->options[] = [
+            'view' => 'admin_forms.checkbox',
+            'args' => compact('name',
+                'label',
+                'values',
+                'checkedValues',
+                'classes',
+                'attrs'
+            )
+        ];
         return $this;
     }
 
-    public function addSelect(string $name, string $label, array $values, mixed $selected = null, string $placeholder = '',
-                                     $attrs = [], bool $isTags = false, bool $isAjax = false, bool $isMultiple = false): static
+    public function addSelect(string $name, string $label, array $values, mixed $selected = null, string $placeholder =
+    '', $attrs = [], bool $isTags = false, string|false $ajax = false, bool $isMultiple = false): static
     {
         [$classes, $attrs] = $this->explodeClassFromAttrs($attrs, ['form-control', 'bootstrap4-select']);
-        $this->html .= view('admin_forms.select', compact('name',
-            'label',
-            'values',
-            'selected',
-            'placeholder',
-            'attrs',
-            'isTags',
-            'isAjax',
-            'isMultiple',
-            'classes'
-        ))->render();
+        if ($isTags) {
+            $isMultiple = true;
+        }
+        if ($isMultiple && !str_ends_with($name, '[]')) {
+            $name = $name . '[]';
+        }
+        $this->options[] = [
+            'view' => 'admin_forms.select',
+            'args' => compact('name',
+                'label',
+                'values',
+                'selected',
+                'placeholder',
+                'attrs',
+                'isTags',
+                'ajax',
+                'isMultiple',
+                'classes')
+        ];
         return $this;
     }
 
@@ -92,7 +114,7 @@ class FormBuilder
     public function addRegion(string $name, string $label, int $level, array $selected = []): static
     {
         $classes = ['form-control', 'bootstrap4-select'];
-        $id = 'region_' . $this->region_used_times;
+        $id = 'region_' . $name;
         $citySelect = $areaSelect = $streetSelect = $villageSelect = null;
         $provinces = Province::pluck('name', 'code')->toArray();
         $provinceSelect = $this->createSimpleSelect($name . '[province_code]', $provinces, $selected['province_code']
@@ -126,75 +148,191 @@ class FormBuilder
             $villageSelect = $this->createSimpleSelect($name . '[village_code]', $villages, $selected['village_code']
                 ?? null, '请选择村镇', ['data-column' => 'village_code']);
         }
-        $this->html .= view('admin_forms.region', compact('name',
-            'label',
-            'level',
-            'selected',
-            'provinceSelect',
-            'citySelect',
-            'areaSelect',
-            'streetSelect',
-            'villageSelect',
-            'id',
-            'classes'
-        ))->render();
-        ++$this->region_used_times;
+        $this->options[] = [
+            'view' => 'admin_forms.region',
+            'args' => compact('name',
+                'label',
+                'level',
+                'selected',
+                'provinceSelect',
+                'citySelect',
+                'areaSelect',
+                'streetSelect',
+                'villageSelect',
+                'id',
+                'classes'
+            )
+        ];
         return $this;
     }
 
-    public function addCkeditor(string $name, string $label, string $value = '', string $placeholder = ''): static
+    public function addCkeditor(string $name, string $label, string|null $value = null, string $placeholder = ''):
+    static
     {
-        $id = 'ckeditor_' . $name . '_' . $this->ckeditor_used_times;
-        $this->html .= view('admin_forms.ckeditor', compact('name', 'label', 'placeholder', 'value', 'id'))
-            ->render();
-        ++$this->ckeditor_used_times;
+        $id = 'ckeditor_' . $name;
+        $this->options[] = [
+            'view' => 'admin_forms.ckeditor',
+            'args' => compact('name', 'label', 'placeholder', 'value', 'id')
+        ];
         return $this;
     }
 
-    public function addDatetimePicker(string $name, string $label, string $value, string $format = 'Y-m-d',
-                                      bool $enableTime = false, bool $enableRange = false): static
+    public function addDatetimePicker(string $name, string $label, string|null $value = null, string $format = 'Y-m-d',
+                                      bool   $enableTime = false, bool $enableRange = false): static
     {
-        $this->html .= \view('admin_forms.datetime_picker', compact('name',
-            'label',
-        'value',
-        'format',
-        'enableTime',
-        'enableRange'
-        ))->render();
+        $this->options[] = [
+            'view' => 'admin_forms.datetime_picker',
+            'args' => compact('name',
+                'label',
+                'value',
+                'format',
+                'enableTime',
+                'enableRange'
+            )
+        ];
         return $this;
     }
 
-    public function addIconSelect(string $name, string $label, string $value = ''): static
+    public function addIconSelect(string $name, string $label, string|null $value = null): static
     {
         $icons = json_decode(file_get_contents(database_path('data') . DIRECTORY_SEPARATOR . 'icons.json'), true);
-        $this->html .= view('admin_forms.icon_select', compact('icons', 'name', 'label', 'value'))->render();
+        $this->options[] = [
+            'view' => 'admin_forms.icon_select',
+            'args' => compact('icons', 'name', 'label', 'value')
+        ];
         return $this;
     }
 
-    public function addTextarea(string $name, string $label, string $value = '', string $placeholder = ''): static
+    public function addTextarea(string $name, string $label, string|null $value = null, string $placeholder = ''):
+    static
     {
-        $this->html .= view('admin_forms.textarea', compact('name', 'value', 'label', 'placeholder'))->render();
+        $this->options[] = [
+            'view' => 'admin_forms.textarea',
+            'args' => compact('name', 'value', 'label', 'placeholder')
+        ];
         return $this;
     }
 
-    public function addUploadImage(string $name, string $label, string|array $uploaded, int $maxFile = 1, bool
-    $cropper = false, $aspectRatio = 16 / 9, array $attrs = []): static
+    public function addUploadImage(string $name, string $label, string|array $uploaded = [], int $maxFile = 1,
+                                   bool   $cropper = false, $aspectRatio = 16 / 9, array $attrs = []): static
     {
         [$classes, $attrs] = $this->explodeClassFromAttrs($attrs, ['dropzone']);
-        $id = 'dropzone_' . $name . '_' . $this->upload_used_times;
-        $this->html .= view('admin_forms/upload_image', compact(
-            'name',
-            'label',
-            'uploaded',
-            'maxFile',
-            'cropper',
-            'aspectRatio',
-            'classes',
-            'attrs',
-            'id'
-        ))->render();
-        ++$this->upload_used_times;
+        $id = 'dropzone_image_' . $name;
+        if (is_string($uploaded) && $uploaded) {
+            $uploaded = [$uploaded];
+        }
+        $uploaded = array_filter($uploaded);
+        if ($maxFile > 1 && !str_ends_with($name, '[]')) {
+            $name = $name . '[]';
+        }
+        $this->options[] = [
+            'view' => 'admin_forms.upload_image',
+            'args' => compact(
+                'name',
+                'label',
+                'uploaded',
+                'maxFile',
+                'cropper',
+                'aspectRatio',
+                'classes',
+                'attrs',
+                'id'
+            )
+        ];
         return $this;
+    }
+
+    public function addUploadFile(string $name, string $label, string|null $uploaded = null, array $attrs = []): static
+    {
+        [$classes, $attrs] = $this->explodeClassFromAttrs($attrs, ['dropzone']);
+        $id = 'dropzone_file_' . $name;
+        $this->options[] = [
+            'view' => 'admin_forms.upload_file',
+            'args' => compact('name',
+                'label',
+                'uploaded',
+                'classes',
+                'attrs',
+                'id'
+            )
+        ];
+        return $this;
+    }
+
+    public function addJson(FormBuilder $builder, string $name, string $label, ?array $value, JsonType $jsonType =
+    JsonType::OBJECT, bool $leastOne = false, int $maxItems = 0): static
+    {
+        $jsonOptions = $builder->options;
+        $sections = [];
+        $template = '';
+        if ($jsonType === JsonType::OBJECT) {
+            $builder->options = $this->modifyJsonAttrs($name, $jsonOptions, $value);
+            $sections[] = $builder->create('', false);
+        } else {
+            $count = count($value);
+            for ($i = 0; $i < $count; $i++) {
+                $newBuilder = new FormBuilder('', '');
+                $newBuilder->options = $this->modifyJsonAttrs($name, $jsonOptions, $value[$i] ?? [], $i);
+                $sections[] = $newBuilder->create('', false);
+            }
+            $newBuilder = new FormBuilder('', '');
+            $newBuilder->options = $this->modifyJsonAttrs($name, $jsonOptions, [], 'rep_index');
+            $template = $newBuilder->create('', false);
+        }
+        $this->options[] = [
+            'view' => 'admin_forms.json',
+            'args' => compact('sections', 'name', 'label', 'jsonType', 'leastOne', 'maxItems', 'template')
+        ];
+        return $this;
+    }
+
+    private function modifyJsonAttrs(string $name, array $option, array $value = [], int|string|null $index = null):
+    array
+    {
+        return array_map(function ($item) use ($name, $value, $index) {
+            $field = $item['args']['name'];
+            if (str_ends_with($item['args']['name'], '[]')) {
+                $item['args']['name'] = $name . ($index !== null ? "[$index]" : '') . '[' . rtrim($item['args']['name'], '[]') . '][]';
+            } else {
+                $item['args']['name'] = $name . ($index !== null ? "[$index]" : '') . "[{$item['args']['name']}]";
+            }
+            if ($value || $index !== null) {
+                switch ($item['view']) {
+                    case 'admin_forms.input':
+                    case 'admin_forms.datetime_picker':
+                    case 'admin_forms.icon_select':
+                    case 'admin_forms.textarea':
+                        $item['args']['value'] = $value[$field] ?? '';
+                        break;
+                    case 'admin_forms.radio':
+                        $item['args']['checkedValue'] = $value[$field] ?? null;
+                        break;
+                    case 'admin_forms.checkbox':
+                        $item['args']['checkedValues'] = $value[$field] ?? [];
+                        break;
+                    case 'admin_forms.select':
+                        $item['args']['selected'] = $value[$field] ?? null;
+                        break;
+                    case 'admin_forms.region':
+                        $item['args']['selected'] = $value[$field] ?? [];
+                        $item['args']['id'] = $this->generateValidId('region_' . $item['args']['name']);
+                        break;
+                    case 'admin_forms.upload_image':
+                        $item['args']['uploaded'] = $value[$field] ?? [];
+                        $item['args']['id'] = $this->generateValidId('dropzone_image_' . $item['args']['name']);
+                        break;
+                    case 'admin_forms.upload_file':
+                        $item['args']['uploaded'] = $value[$field] ?? null;
+                        $item['args']['id'] = $this->generateValidId('dropzone_file_' . $item['args']['name']);
+                        break;
+                    case 'admin_forms.ckeditor':
+                        $item['args']['value'] = $value[$field] ?? '';
+                        $item['args']['id'] = $this->generateValidId('ckeditor_' . $item['args']['name']);
+                        break;
+                }
+            }
+            return $item;
+        }, $option);
     }
 
     private function explodeClassFromAttrs(array $attrs, array $classes = ['form-control']): array
@@ -213,14 +351,25 @@ class FormBuilder
         return [$classes, $str];
     }
 
-    public function create(bool $submitButton = true, bool $resetButton = true): \Illuminate\View\View
+    public function create(string $title, bool $full = true):
+    \Illuminate\View\View | string
     {
+        foreach ($this->options as $item) {
+            $this->html .= view($item['view'], $item['args'])->render();
+        }
+        if (!$full) {
+            return $this->html;
+        }
         return view('admin_forms.form', [
             'action' => $this->action,
             'method' => $this->method,
             'html' => $this->html,
-            'submitButton' => $submitButton,
-            'resetButton' => $resetButton
+            'title' => $title
         ]);
+    }
+
+    private function generateValidId(string $id): string
+    {
+        return str_replace(['[', ']'], '_', $id);
     }
 }

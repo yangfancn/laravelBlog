@@ -28,4 +28,17 @@ use Illuminate\Database\Eloquent\Model;
 class Tag extends Model
 {
     use HasFactory;
+
+    public function posts(): \Illuminate\Database\Eloquent\Relations\MorphToMany
+    {
+        return $this->morphedByMany(Post::class, 'taggable');
+    }
+
+    public function getOrCreate(array $names): ?array
+    {
+        $this->upsert(array_map(function ($name){
+            return ['name' => $name];
+        }, $names), 'name', null);
+        return $this->whereIn('name', $names)->pluck('id')->toArray();
+    }
 }
