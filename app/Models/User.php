@@ -37,6 +37,14 @@ use Laravel\Sanctum\HasApiTokens;
  * @method static \Illuminate\Database\Eloquent\Builder|User whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|User whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property string|null $photo
+ * @property int $status
+ * @property int $post_count
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Post[] $posts
+ * @property-read int|null $posts_count
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePhoto($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User wherePostCount($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereStatus($value)
  */
 class User extends Authenticatable
 {
@@ -51,6 +59,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'photo'
     ];
 
     /**

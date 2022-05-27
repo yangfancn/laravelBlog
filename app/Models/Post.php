@@ -46,6 +46,9 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Post whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Post whereUserId($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Tag[] $tags
+ * @property-read int|null $tags_count
+ * @property-read \App\Models\User|null $user
  */
 class Post extends Model
 {
@@ -65,17 +68,24 @@ class Post extends Model
 
     protected static function booted()
     {
-        static::saved(function (Post $post) {
-            if ($post->isDirty('user_id') && $post->getOriginal('user_id')) {
-                $this->user->update([
-                    'post_count' => $this->user->posts()->count()
-                ]);
+        static::updated(function (Post $post) {
+            if ($post->isDirty('user_id') && $original_user_id = $post->getOriginal('user_id')) {
+                $originalUser = User::find($original_user_id);
+                $originalUser->post_count = $originalUser->posts()->count();
+                $post->user->post_count = $post->user->posts()->count();
+                $originalUser->save();
+                $post->user->save();
             }
+        });
+
+        static::created(function (Post $post) {
+            $post->user->post_count = $post->user->posts()->count();
+            $post->user->save();
         });
 
 
         static::deleted(function (Post $post) {
-            $post->tags()->delete();
+            $post->tags()->detach();
         });
     }
 }

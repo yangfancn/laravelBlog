@@ -17,7 +17,7 @@ window.list_init = function (){
       jQuery(_this).html(response.data.status ? '<i class="fa fa-check text-info"></i>'
         : '<i class="fa fa-times text-info"></i>');
       jQuery(_this).closest('tr').find('td[data-field="status"] small')
-        .text(response.data.status === 1 ? '启用' : '停用')
+        .text(response.data.status ? '启用' : '禁用')
         .data('status', response.data.data.status);
     })
   })

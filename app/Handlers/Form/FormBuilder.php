@@ -58,7 +58,7 @@ class FormBuilder
     }
 
     public function addCheckbox(string $name, string $label, array $values, array $checkedValues = [], array $attrs =
-    []): static
+    [], array $disabled = []): static
     {
         [$classes, $attrs] = $this->explodeClassFromAttrs($attrs, ['form-check-input']);
         if (!str_ends_with($name, '[]')) {
@@ -71,7 +71,8 @@ class FormBuilder
                 'values',
                 'checkedValues',
                 'classes',
-                'attrs'
+                'attrs',
+                'disabled'
             )
         ];
         return $this;
@@ -86,6 +87,9 @@ class FormBuilder
         }
         if ($isMultiple && !str_ends_with($name, '[]')) {
             $name = $name . '[]';
+        }
+        if ($selected && empty($values)) {
+            $values = $selected;
         }
         $this->options[] = [
             'view' => 'admin_forms.select',

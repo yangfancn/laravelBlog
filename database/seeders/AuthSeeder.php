@@ -37,7 +37,7 @@ class AuthSeeder extends Seeder
             => 1, 'rank' => 0],
             ['id' => 9, 'description' => '主界面', 'name' => 'admin.index', 'show' => 0, 'pid' => 0, 'status'
             => 1, 'rank' => 0],
-            ['id' => 10, 'description' => '图片上传', 'name' => 'admin.upload.image', 'show' => 0, 'pid' => 0, 'status'
+            ['id' => 10, 'description' => '上传', 'name' => 'admin.upload', 'show' => 0, 'pid' => 0, 'status'
             => 1, 'rank' => 0],
             ['id' => 11, 'description' => '用户列表', 'name' => 'admin.admins.index', 'show' => 1, 'pid' => 1, 'status' => 1, 'rank'
             => 0, 'icon' => 'fa-solid fa-user'],
@@ -53,19 +53,19 @@ class AuthSeeder extends Seeder
                 'rank' => 0],
             ['id' => 17, 'description' => '删除用户', 'name' => 'admin.admins.destroy', 'show' => 0, 'pid' => 1, 'status' => 1,
                 'rank' => 0],
-            ['id' => 18, 'description' => '用户组列表', 'name' => 'admin.roles.index', 'show' => 1, 'pid' => 1,
+            ['id' => 18, 'description' => '角色列表', 'name' => 'admin.roles.index', 'show' => 1, 'pid' => 1,
                 'status' => 1, 'rank' => 0, 'icon' => 'fa-solid fa-users'],
-            ['id' => 19, 'description' => '创建用户组', 'name' => 'admin.roles.create', 'show' => 0, 'pid' => 1,
+            ['id' => 19, 'description' => '创建角色', 'name' => 'admin.roles.create', 'show' => 0, 'pid' => 1,
                 'status' => 1, 'rank' => 0],
-            ['id' => 20, 'description' => '保存用户组', 'name' => 'admin.roles.store', 'show' => 0, 'pid' => 1,
+            ['id' => 20, 'description' => '保存角色', 'name' => 'admin.roles.store', 'show' => 0, 'pid' => 1,
                 'status' => 1, 'rank' => 0],
-            ['id' => 21, 'description' => '编辑用户组', 'name' => 'admin.roles.edit', 'show' => 0, 'pid' => 1,
+            ['id' => 21, 'description' => '编辑角色', 'name' => 'admin.roles.edit', 'show' => 0, 'pid' => 1,
                 'status' => 1, 'rank' => 0],
-            ['id' => 22, 'description' => '更新用户组', 'name' => 'admin.roles.update', 'show' => 0, 'pid' => 1,
+            ['id' => 22, 'description' => '更新角色', 'name' => 'admin.roles.update', 'show' => 0, 'pid' => 1,
                 'status' => 1, 'rank' => 0],
-            ['id' => 23, 'description' => '更改用户组状态', 'name' => 'admin.roles.status', 'show' => 0, 'pid' => 1,
+            ['id' => 23, 'description' => '更改角色状态', 'name' => 'admin.roles.status', 'show' => 0, 'pid' => 1,
                 'status' => 1, 'rank' => 0],
-            ['id' => 24, 'description' => '删除用户组', 'name' => 'admin.roles.destroy', 'show' => 0, 'pid' => 1,
+            ['id' => 24, 'description' => '删除角色', 'name' => 'admin.roles.destroy', 'show' => 0, 'pid' => 1,
                 'status' => 1, 'rank' => 0],
             ['id' => 25, 'description' => '文章管理', 'name' => 'admin.post', 'show' => 1, 'pid' => 0,
                 'status' => 1, 'rank' => 1, 'icon' => 'fa-solid fa-file-lines'],
@@ -104,7 +104,7 @@ class AuthSeeder extends Seeder
             ['id' => 42, 'description' => '更新网站设置', 'name' => 'admin.sites.update', 'show' => 0, 'pid' => 41,
                 'status' => 1, 'rank' => 0],
             ['id' => 43, 'description' => 'CKEditor图片上传', 'name' => 'admin.upload.ckeditor', 'show' => 0, 'pid' =>
-                0, 'status' => 1, 'rank' => 0],
+                10, 'status' => 1, 'rank' => 0],
             ['id' => 44, 'description' => '标签列表-ajax', 'name' => 'admin.tags.list', 'show' => 0, 'pid' => 53, 'status'
             => 1, 'rank' => 0],
             ['id' => 45, 'description' => '用户管理', 'name' => 'admin.users.index', 'show' => 1, 'pid' => 0, 'status'
@@ -137,7 +137,9 @@ class AuthSeeder extends Seeder
             => 1, 'rank' => 0],
             ['id' => 59, 'description' => '排序 Tag', 'name' => 'admin.tags.rank', 'show' => 0, 'pid' => 53, 'status'
             => 1, 'rank' => 0],
-            ['id' => 60, 'description' => '文件上传', 'name' => 'admin.upload.file', 'show' => 0, 'pid' => 0, 'status'
+            ['id' => 60, 'description' => '图片上传', 'name' => 'admin.upload.image', 'show' => 0, 'pid' => 10, 'status'
+            => 1, 'rank' => 0],
+            ['id' => 61, 'description' => '文件上传', 'name' => 'admin.upload.file', 'show' => 0, 'pid' => 10, 'status'
             => 1, 'rank' => 0],
         ];
         $permissions = array_map(function ($item) {

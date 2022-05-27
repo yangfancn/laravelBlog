@@ -13,7 +13,7 @@
       <option
         value="{{ $value }}"
         @if($value === $selected || (is_array($selected) && in_array($value, $selected)))selected @endif
-      >{{ $_name }}</option>
+      >{!! $_name !!}</option>
     @endforeach
   </select>
 </div>

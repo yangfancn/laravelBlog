@@ -28,7 +28,7 @@ class PostRequest extends FormRequest
             'category_id' => 'required|integer',
             'user_id' => 'required|integer',
             'tags' => 'array',
-            'thumb' => ['regex:/^\/([a-zA-Z0-9]+\/)+[a-zA-Z0-9]+\.(jpg|png|jpeg|gif|webp|svg)$/i'],
+            'thumb' => ['regex:/^\/([a-zA-Z0-9]+\/)+[a-zA-Z0-9]+\.(jpg|png|jpeg|gif|webp|svg)$/i', 'nullable'],
             'summary' => 'between:3,120',
             'created_at' => 'date|nullable',
             'content' => 'required'

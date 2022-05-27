@@ -28,7 +28,7 @@ class PermissionRequest extends FormRequest
             'name' => [
                 'required',
                 'regex:/^[a-zA-Z][a-zA-Z\.]+[a-zA-Z]$/',
-                Rule::unique('permissions')->ignore($this->permission->id)
+                Rule::unique('permissions')->ignore($this->permission->id ?? null)
             ],
             'description' => ['required'],
             'pid' => ['required', 'integer'],

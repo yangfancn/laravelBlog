@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('password');
             $table->string('photo');
+            $table->boolean('status')->default(true);
             $table->rememberToken();
             $table->timestamps();
         });

@@ -14,7 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer('post_count')->after('email');
+            $table->integer('post_count')->default(0)->after('email');
+            $table->boolean('status')->default(true)->after('email');
         });
     }
 
@@ -26,7 +27,7 @@ return new class extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['post_count']);
+            $table->dropColumn(['post_count', 'status']);
         });
     }
 };

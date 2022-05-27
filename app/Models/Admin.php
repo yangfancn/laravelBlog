@@ -35,6 +35,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @method static \Illuminate\Database\Eloquent\Builder|Admin whereRememberToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Admin whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int $status
+ * @method static \Illuminate\Database\Eloquent\Builder|Admin whereStatus($value)
  */
 class Admin extends Authenticatable
 {
@@ -42,5 +44,5 @@ class Admin extends Authenticatable
     use HasRoles;
 
     protected $guarded = 'admin';
-    protected $fillable = ['name', 'password'];
+    protected $fillable = ['name', 'password', 'photo', 'status'];
 }

@@ -76,9 +76,9 @@ axios.interceptors.response.use(response => {
   shiftPool(response)
   return response
 }, error => {
-  let status = error.response.status
-  let _message
-  if (error.response.data.message && [404].indexOf(error.response.showConfirmButton) !== -1) {
+  let status = error.response.status;
+  let _message;
+  if (error.response.data.message && [404, 422].indexOf(error.response.status) !== -1) {
     _message = error.response.data.message
   } else if (status in httpStatusCode) {
     _message = httpStatusCode[status].message
@@ -88,7 +88,6 @@ axios.interceptors.response.use(response => {
   } else {
     _message = '未知错误'
   }
-  console.log(_message)
   Toast.fire({
     icon: 'error',
     title: _message

@@ -11,7 +11,7 @@ class CategoryHandler
     protected array $temp = [];
     protected $recursion = false;
 
-    public function __construct(public Collection $channels)
+    public function __construct(public Collection|\Illuminate\Support\Collection $channels)
     {
     }
 

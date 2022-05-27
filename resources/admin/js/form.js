@@ -2,7 +2,7 @@ import jQuery from "jquery";
 import axios from "axios";
 import Cropper from "cropperjs";
 import flatpcikr from "flatpickr"
-import { Mandarin } from "flatpickr/dist/l10n/zh";
+import {Mandarin} from "flatpickr/dist/l10n/zh";
 
 require('select2');
 require('flatpickr');
@@ -72,25 +72,26 @@ window.createUploadImage = function (elementId, maxFile, cropper, aspectRatio, u
         this.removeFile(file);
       }
     },
-    init: function (){
+    init: function () {
       if (uploaded.length) {
         let _this = this;
         jQuery.each(uploaded, (index, value) => {
           let mockFile = {
-            name: value.filename,
-            size: value.size,
-            url: value.url,
-            cropped: true
-          },
+              name: value,
+              size: null,
+              url: value,
+              cropped: true,
+              accepted: true
+            },
             response = {
               errno: 0,
               msg: '',
-              data: [{url: value.url}]
+              data: [{url: value}]
             };
           _this.files.push(mockFile);
           _this.emit('addedfile', mockFile);
-          _this.emit('success', mockFile);
-          _this.emit('thumbnail', mockFile);
+          _this.emit('success', mockFile, response);
+          _this.emit('thumbnail', mockFile, mockFile.url);
           _this.emit('complete', mockFile);
         })
       }
@@ -156,7 +157,12 @@ window.createUploadImage = function (elementId, maxFile, cropper, aspectRatio, u
       })
 
       this.on('removedfile', function (file) {
-        jQuery(this.element).parents('.form-group').find('input[value="' + file.dataURL + '"]').remove()
+        let fileInput = jQuery(this.element).parents('.form-group').find('input[value="' + file.dataURL + '"]');
+        if (this.files.length === 0) {
+          fileInput.val(null);
+        } else {
+          fileInput.remove();
+        }
         // _input.val(_input.val().replace(new RegExp(';?' + file.dataURL, 'gi'), ''))
         // console.log(_input.val())
       })
@@ -191,22 +197,27 @@ window.createUploadFile = function (elementId, uploaded) {
         this.removeFile(file);
       }
     },
-    error: function (file, response){
+    error: function (file, response) {
       if (typeof response.message !== 'undefined') {
         msg(response.message, 'error');
       }
     },
-    init: function (){
+    init: function () {
       if (uploaded) {
         let mockFile = {
             name: uploaded,
             size: null,
             url: uploaded,
+          },
+          response = {
+            errno: 0,
+            msg: '',
+            data: [{url: uploaded}]
           };
         this.files.push(mockFile);
         this.emit('addedfile', mockFile);
-        this.emit('success', mockFile);
-        this.emit('thumbnail', mockFile);
+        this.emit('success', mockFile, response);
+        this.emit('thumbnail', mockFile, mockFile.url);
         this.emit('complete', mockFile);
       }
 
@@ -381,7 +392,7 @@ function dataURItoBlob(dataURI) {
   for (let i = 0; i < byteString.length; i++) {
     ia[i] = byteString.charCodeAt(i);
   }
-  return new Blob([ab], { type: 'image/jpeg' });
+  return new Blob([ab], {type: 'image/jpeg'});
 }
 
 function getSrcImageFromBlob(blob) {
@@ -395,7 +406,7 @@ function blobToFile(theBlob, fileName) {
   return theBlob;
 }
 
-function html_special_chars_decode(str){
+function html_special_chars_decode(str) {
   str = str.replace(/&amp;/g, '&');
   str = str.replace(/&lt;/g, '<');
   str = str.replace(/&gt;/g, '>');
